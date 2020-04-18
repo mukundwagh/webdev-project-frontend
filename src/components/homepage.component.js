@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import SearchBar from "./restaurantsearch.component";
 import RestaurantPanel from "./restaurantpannel.component"
-import {searchRestaurant} from "../service/RestaurantService";
+import {
+  fetchZomatoRestaurantbyId, getRestaurantService,
+  searchRestaurant
+} from "../service/RestaurantService";
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -20,30 +23,54 @@ export default class HomePage extends Component {
     }
   }
 
-  clearSearch = (e) => {
+  clearSearch = async (e) => {
     this.setState(this.initialState)
+    this.props.history.push(`/`)
   };
 
-  searchTextChange(e) {
-    e.persist()
-    this.setState({searchRestaurantText: e.target.value})
+  searchTextChange = async (e)=> {
+    e.persist();
+    this.setState({searchRestaurantText: e.target.value});
     if (e.keyCode == 13 || e.which == 13) {
-      this.searchByValue();
+      await this.searchByValue();
     }
-
   }
+
+  componentWillMount = async () => {
+    const { match: { params } } = this.props;
+    if(params.query){
+      this.setState({
+        searchRestaurantText: params.query,
+        searchRestaurantResult:await searchRestaurant(params.query)
+      });
+    }
+  };
 
   searchByValue = async () => {
     if (this.state.searchRestaurantText !== "") {
-      console.log('Searching for ', this.state.searchRestaurantText)
+      console.log('Searching for ', this.state.searchRestaurantText);
       console.log(this.state.searchRestaurantText);
       // this.setState({showContent: false})
       let restaurant = await searchRestaurant(this.state.searchRestaurantText);
       this.setState({
         searchRestaurantResult: restaurant
-      })
+      },() => {
+            this.props.history.push(`/search/${this.state.searchRestaurantText}`)
+          })
     }
   };
+
+  // searchByRestaurants = async () => {
+  //   if (this.state.searchRestaurantText !== "") {
+  //     console.log('Searching for ', this.state.searchRestaurantText);
+  //     console.log(this.state.searchRestaurantText);
+  //     // this.setState({showContent: false})
+  //     let restaurant = await searchRestaurant(this.state.searchRestaurantText);
+  //     this.setState({
+  //       searchRestaurantResult: restaurant
+  //     })
+  //   }
+  // };
 
   render() {
     return (

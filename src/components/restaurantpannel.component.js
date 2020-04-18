@@ -45,7 +45,7 @@ export default class RestaurantPanel extends Component {
                 this.state.searchRestaurantResult.restaurants.map(restaurant =>
                     <RestaurantRowComponent
                         restaurant={restaurant.restaurant}
-                        key={restaurant.id}
+                        key={restaurant.restaurant.id}
                     />
                 )
               }

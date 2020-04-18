@@ -8,47 +8,71 @@ export default class SignUp extends Component {
   }
 
   state = {
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    role: "User"
+    error:null,
+    user: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      role: "customer",
+      username: ""
+    }
   };
 
   updateEmail = (e) => {
     this.setState({
-      email: e.target.value
+    user: {
+      ...this.state.user,
+      email: e.target.value,
+      username: e.target.value
+    }
     });
   };
 
   updatePassword = (e) => {
     this.setState({
-      password: e.target.value
+      user: {
+        ...this.state.user,
+        password: e.target.value
+      }
     });
 
   };
 
   updateFirstName = (e) => {
     this.setState({
-      firstname: e.target.value
+      user: {
+        ...this.state.user,
+        firstName: e.target.value
+      }
     });
   };
 
   updateLastName = (e) => {
     this.setState({
-      lastname: e.target.value
+      user: {
+        ...this.state.user,
+        lastName: e.target.value
+      }
     });
 
   };
 
   updateRole = (e) => {
     this.setState({
+      user: {
+        ...this.state.user,
       role: e.target.value
+      }
     });
   };
 
   createUser = async () => {
-    createUserService(this.state).then()
+    let out = await createUserService(this.state)
+    if(out && out.email===null){
+      this.setState({error: "Invalid details"})
+    }
+
   };
 
   render() {
@@ -62,7 +86,7 @@ export default class SignUp extends Component {
                 <label>First name</label>
                 <input type="text" className="form-control"
                        placeholder="First name"
-                       value={this.state.firstname}
+                       value={this.state.firstName}
                        onChange={this.updateFirstName}/>
               </div>
 
@@ -70,7 +94,7 @@ export default class SignUp extends Component {
                 <label>Last name</label>
                 <input type="text" className="form-control"
                        placeholder="Last name"
-                       value={this.state.lastname}
+                       value={this.state.lastName}
                        onChange={this.updateLastName}/>
               </div>
 
@@ -92,9 +116,9 @@ export default class SignUp extends Component {
               <div className="form-group">
                 <label>Type</label>
                 <select value={this.state.role} className="form-control"
-                        onChange={this.updateType}>
-                  <option value="User">User</option>
-                  <option value="Restaurant_Owner">Restaurant Owner</option>
+                        onChange={this.updateRole}>
+                  <option value="customer">Customer</option>
+                  <option value="owner">Restaurant Owner</option>
                 </select>
               </div>
 
@@ -104,7 +128,17 @@ export default class SignUp extends Component {
               <p className="forgot-password text-right">
                 Already registered <a href="#">sign in?</a>
               </p>
+              <div>
+                {
+                  this.state.error &&
+                  <h6 className="text-danger">
+                    {this.state.error}
+                  </h6>
+                }
+              </div>
             </form>
+
+
           </div>
         </div>
     );

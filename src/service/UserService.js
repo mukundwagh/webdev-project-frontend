@@ -1,7 +1,7 @@
 import {API_URL} from "../common/constants";
 
 export const createUserService = async (user) => {
-  let response = await fetch(API_URL, {
+  let response = await fetch(API_URL + "/user", {
     method: 'POST',
     body: JSON.stringify(user),
     headers: {
@@ -14,8 +14,17 @@ export const createUserService = async (user) => {
 
 
 export const findUserByEmailIdService = async (userEmailId) => {
-  const response = await fetch(`${API_URL}/${userEmailId}`, {
+  const url = API_URL+"/user/email/"+ userEmailId;
+  const response = await fetch(url, {
     method: 'GET'
   });
-  return await response.json()
+
+  let res = await response.json();
+
+  if(response.status===200 && res.id!=null){
+    return res
+  }
+
+  return {"error" : "Invalid user input"}
+
 };

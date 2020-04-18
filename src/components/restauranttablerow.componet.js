@@ -18,12 +18,8 @@ export default class RestaurantRowComponent extends React.Component {
           <td className="text-left">
             {
               localStorage.getItem("token")!=null &&
-              <Link to={{
-                pathname: "/admin",
-                state: {
-                  restaurant: this.state.restaurant
-                }
-              }}>{this.state.restaurant.name}</Link>
+              <Link to={`/restaurant/${parseInt(this.state.restaurant.id)}`}>
+                {this.state.restaurant.name}</Link>
             }
             {
               localStorage.getItem("token")==null &&

@@ -5,7 +5,7 @@ import HomePage from "../components/homepage.component";
 import Login from "../components/login.component";
 import SignUp from "../components/signup.component";
 import Logout from "../components/logout.component";
-import AdminPage from "../components/admin.component";
+import RestaurantPage from "../components/restaurnat.component";
 import Profile from "../components/userdetails";
 
 export default class MainContainer extends Component {
@@ -26,10 +26,11 @@ export default class MainContainer extends Component {
                 <div>
                   <Switch>
                     <Route exact path='/' component={HomePage}/>
+                    <Route path='/search/:query' component={HomePage}/>
                     <Route path="/sign-in" component={Login}/>
                     <Route path="/sign-up" component={SignUp}/>
                     <Route path="/sign-out" component={Logout}/>
-                    <Route path="/admin" component={AdminPage}/>
+                    <Route path="/restaurant/:id" component={RestaurantPage}/>
                     <Route path="/profile" component={Profile}/>
                   </Switch>
                 </div>

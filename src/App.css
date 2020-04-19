@@ -42,6 +42,7 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   background: #8cd2ff !important;
   min-height: 100vh;
@@ -52,7 +53,7 @@ body {
 
 }
 
-h1,h2,h3,h4,h5,h6,label,span,select {
+h1, h2, h3, h4, h5, h6, label, span, select {
   font-weight: 500;
   font-family: 'Fira Sans', sans-serif;
 }
@@ -77,6 +78,15 @@ body, html, .App, #root, .auth-wrapper {
   justify-content: center;
   flex-direction: column;
   text-align: left;
+}
+
+.auth-inner-profile {
+  margin: auto;
+  background: #ffffff;
+  box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+  padding: 40px 55px 45px 55px;
+  border-radius: 15px;
+  transition: all .3s;
 }
 
 .auth-inner {
@@ -150,10 +160,13 @@ body, html, .App, #root, .auth-wrapper {
   margin: 0 10px;
 }
 
-.rowC{display:flex; flex-direction:row;}
+.rowC {
+  display: flex;
+  flex-direction: row;
+}
 
-
-.review-comment{ resize: none;
+.review-comment {
+  resize: none;
   padding: 2%;
   width: 100%;
   height: 75%;
@@ -165,7 +178,6 @@ body, html, .App, #root, .auth-wrapper {
   border-right-color: green;
 }
 
-textarea:focus
-{
+textarea:focus {
   outline: none;
 }

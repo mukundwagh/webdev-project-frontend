@@ -28,18 +28,14 @@ export const fetchZomatoRestaurantbyId = async (restaurantId) => {
 
 
 export const getRestaurantService = async (restaurant_id) => {
-  let url = API_URL + "/restaurants";
+  let url = API_URL + "/restaurant/" + restaurant_id;
   let response = await fetch(url, {
     method: 'GET',
     headers: {
       'content-type': 'application/json'
     }
   });
-  let rest = await response.json();
-  rest = rest.filter((r) => r.id.toString() === restaurant_id)
-  if(rest.length>0){
-    return rest[0]
-  }
+  return await response.json()
 };
 
 export const claimRestaurantService = async (restaurant) => {
@@ -47,6 +43,18 @@ export const claimRestaurantService = async (restaurant) => {
   let response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(restaurant),
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  return await response.json()
+};
+
+export const bookAppointmentService = async (appointment) => {
+  let url = API_URL + "/appointment";
+  let response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(appointment),
     headers: {
       'content-type': 'application/json'
     }

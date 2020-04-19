@@ -3,7 +3,17 @@ import {Redirect} from "react-router-dom"
 import DateTimePicker from 'react-datetime-picker'
 import ReviewComponent from "./reviews.component";
 import PostReviewComponent from "./postreviews.component";
-import {claimRestaurantService,getRestaurantService,fetchZomatoRestaurantbyId} from "../service/RestaurantService"
+import {
+  claimRestaurantService,
+  fetchZomatoRestaurantbyId,
+  getRestaurantService,
+  bookAppointmentService, searchRestaurant
+} from "../service/RestaurantService"
+
+import {
+  fetchReviewByRestaurantId,
+  postReviewService
+} from "../service/ReviewService"
 
 export default class RestaurantPage extends Component {
 
@@ -24,35 +34,49 @@ export default class RestaurantPage extends Component {
   }
 
   componentWillMount = async () => {
-      const {match: {params}} = this.props;
-      let restaurant = await fetchZomatoRestaurantbyId(params.id);
-      this.setState({
-        restaurant: restaurant
-      });
+    const {match: {params}} = this.props;
+    let restaurant = await fetchZomatoRestaurantbyId(params.id);
+    this.setState({
+      restaurant: restaurant
+    });
 
-      let restaurantDB = await
-      getRestaurantService(restaurant.id);
-      this.setState({
-        restaurantDB: restaurantDB
-      })
+    let restaurantDB = await getRestaurantService(restaurant.id);
+    this.setState({
+      restaurantDB: restaurantDB
+    })
+
+    let reviewDB = await fetchReviewByRestaurantId(restaurant.id);
+    this.setState({
+      reviewDB: reviewDB
+    })
   };
-
 
   selectReservationTime = appointmentTime => this.setState({appointmentTime});
 
   makeReservation = async (e) => {
-    console.log(e.toString())
+    e.preventDefault();
+    if(localStorage.getItem("token") !== null) {
+      let user = JSON.parse(localStorage.getItem("token"));
+      let datetime = {};
+      datetime["date"] = this.state.appointmentTime.toISOString();
+      datetime["time"] = this.state.appointmentTime.toISOString();
+      datetime["customerId"] = user.id;
+      datetime["restaurantId"] = parseInt(this.state.restaurant.id);
+      await bookAppointmentService(datetime);
+    }
   };
 
   claimRestaurant = async (e) => {
+    e.preventDefault();
     let user = localStorage.getItem("token");
-    if(user!=null && this.state.restaurant != null){
-      let rest ={
+    if (user != null && this.state.restaurant != null) {
+      let rest = {
         "id": parseInt(this.state.restaurant.id),
         "name": this.state.restaurant.name,
         "address": this.state.restaurant.location.address,
         "city": this.state.restaurant.location.locality_verbose,
-        "rating": parseFloat(this.state.restaurant.user_rating.aggregate_rating),
+        "rating": parseFloat(
+            this.state.restaurant.user_rating.aggregate_rating),
         "owner": parseInt(JSON.parse(user).id),
         "website": this.state.restaurant.url,
         "phone": this.state.restaurant.phone_numbers.toString()
@@ -62,9 +86,18 @@ export default class RestaurantPage extends Component {
     }
   };
 
+  postReview = async (review) => {
 
-  postReview = async (e) => {
-    console.log(e.toString())
+    if(localStorage.getItem("token") !== null){
+      let user = JSON.parse(localStorage.getItem("token"));
+      review["customerId"] = user.id;
+      review["restaurantId"] = parseInt(this.state.restaurant.id);
+      await postReviewService(review);
+      let reviewDB = await fetchReviewByRestaurantId(this.state.restaurant.id);
+      this.setState({
+        reviewDB: reviewDB
+      })
+    }
   };
 
   render() {
@@ -82,7 +115,7 @@ export default class RestaurantPage extends Component {
               </div>
               <div className="rowC">
                 <div className="mt-3 auth-wrapper">
-                  <div className="auth-inner">
+                  <div className="auth-inner-profile">
                     <h2 className="text-center mb-2 border-bottom">Details</h2>
                     <form>
                       <div className="form-group row">
@@ -117,14 +150,14 @@ export default class RestaurantPage extends Component {
                       {
                         localStorage.getItem("token") !== null &&
                         JSON.parse(localStorage.getItem("token")).role
-                        === "customer" && this.state.restaurantDB!=null &&
+                        === "customer" && this.state.restaurantDB != null &&
                         <div className="form-group row">
                           <DateTimePicker disableClock={true}
                                           disableCalendar={true}
                                           onChange={this.selectReservationTime}
                                           value={this.state.appointmentTime}
                           />
-                          <button type="submit" onClick={this.makeReservation}
+                          <button onClick={this.makeReservation}
                                   className="btn btn-success ml-2">Make
                             Reservation
                           </button>
@@ -133,7 +166,7 @@ export default class RestaurantPage extends Component {
                       {
                         localStorage.getItem("token") !== null &&
                         JSON.parse(localStorage.getItem("token")).role
-                        === "owner" && this.state.restaurantDB==null &&
+                        === "owner" && this.state.restaurantDB == null &&
                         <div>
                           <div className="form-group row">
                             <button type="submit" onClick={this.claimRestaurant}
@@ -152,15 +185,16 @@ export default class RestaurantPage extends Component {
                       <PostReviewComponent postReview={this.postReview}/>
                     </div>
                     {
-                      localStorage.getItem("token") !== null &&
-                      JSON.parse(localStorage.getItem("token")).reviews.map(
-                          review =>
-                              (review.rating !== null && review.comment
-                                  !== undefined) ?
-                                  <ReviewComponent review={review}
-                                                   key={review.id}/> :
-                                  null
-                      )
+                    localStorage.getItem("token") !== null &&
+                    this.state.reviewDB &&
+                    this.state.reviewDB.map(
+                    review =>
+                    (review.rating !== null && review.comment
+                    !== undefined) ?
+                    <ReviewComponent review={review}
+                    key={review.id}/> :
+                    null
+                    )
                     }
                   </div>
                   <div>

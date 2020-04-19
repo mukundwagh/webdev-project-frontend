@@ -6,7 +6,7 @@ import Login from "../components/login.component";
 import SignUp from "../components/signup.component";
 import Logout from "../components/logout.component";
 import RestaurantPage from "../components/restaurnat.component";
-import Profile from "../components/userdetails";
+import Profile from "../components/userprofile";
 
 export default class MainContainer extends Component {
   constructor() {
@@ -31,7 +31,7 @@ export default class MainContainer extends Component {
                     <Route path="/sign-up" component={SignUp}/>
                     <Route path="/sign-out" component={Logout}/>
                     <Route path="/restaurant/:id" component={RestaurantPage}/>
-                    <Route path="/profile" component={Profile}/>
+                    <Route path="/profile/:id?" component={Profile}/>
                   </Switch>
                 </div>
               </div>

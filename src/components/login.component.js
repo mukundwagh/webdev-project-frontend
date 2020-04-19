@@ -5,7 +5,8 @@ import {findUserByEmailIdService} from "../service/UserService"
 export default class Login extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+
     const token = localStorage.getItem("token");
     let isloggedIn = true;
 
@@ -48,7 +49,8 @@ export default class Login extends Component {
       localStorage.setItem("token", JSON.stringify(get_user));
       this.setState({
         loggedIn: true
-      })
+      });
+      this.props.loggedInEvent();
     }
 
   };

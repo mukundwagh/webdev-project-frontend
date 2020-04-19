@@ -16,20 +16,39 @@ export default class MainContainer extends Component {
     }
   }
 
+
+  loggedInEvent = (e) => {
+    this.setState({
+      isLoggedIn:true
+    });
+  };
+
+  loggedOutEvent = (e) => {
+    this.setState({
+      isLoggedIn:false
+    });
+  };
+
   render() {
     return(
         <div>
           <Router>
             <div className="App">
-              <NavBar></NavBar>
+              <NavBar isLoggedIn={this.state.isLoggedIn}></NavBar>
               <div>
                 <div>
                   <Switch>
                     <Route exact path='/' component={HomePage}/>
                     <Route path='/search/:query' component={HomePage}/>
-                    <Route path="/sign-in" component={Login}/>
-                    <Route path="/sign-up" component={SignUp}/>
-                    <Route path="/sign-out" component={Logout}/>
+                    <Route
+                        path='/sign-in'
+                        render={(props) => <Login {...props} loggedInEvent={this.loggedInEvent} />}
+                    />
+                    <Route
+                        path='/sign-out'
+                        render={(props) => <Logout {...props} loggedOutEvent={this.loggedOutEvent} />}
+                    />
+                    <Route exact path="/sign-up" component={SignUp}/>
                     <Route path="/restaurant/:id" component={RestaurantPage}/>
                     <Route path="/profile/:id?" component={Profile}/>
                   </Switch>

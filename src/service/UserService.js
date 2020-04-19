@@ -58,6 +58,6 @@ export const getAppointments = async (userId) => {
     return res
   }
 
-  return {"error" : "Invalid user input"}
+  return res
 
 };

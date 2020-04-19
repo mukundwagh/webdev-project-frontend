@@ -67,8 +67,9 @@ export default class SignUp extends Component {
     });
   };
 
-  createUser = async () => {
-    let out = await createUserService(this.state.user)
+  createUser = async (e) => {
+    e.preventDefault();
+    let out = await createUserService(this.state.user);
     if(out && out.email===null){
       this.setState({error: "Invalid details"})
     }

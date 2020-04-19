@@ -1,5 +1,6 @@
 import React, {Component} from "react";
-import {Link} from "react-router-dom"
+import {Link} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 
 export default class Logout extends Component {
 
@@ -8,16 +9,10 @@ export default class Logout extends Component {
   }
 
   render() {
-    localStorage.removeItem("token");
-    return (
-        <div className="auth-wrapper">
-          <div className="auth-inner">
-            <div>
-              <h3>You have been logged out</h3>
-              <Link to="/sign-in">Login</Link>
-            </div>
-          </div>
-        </div>
-    );
+    if(localStorage.getItem("token")!==null){
+      this.props.loggedOutEvent();
+      localStorage.removeItem("token");
+    }
+    return <Redirect to="/"/>;
   }
 }

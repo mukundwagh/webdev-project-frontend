@@ -208,12 +208,21 @@ export default class SignUp extends Component {
                   <option value="owner">Restaurant Owner</option>
                 </select>
               </div>
+
               {
-                this.state.detailsOfLoggedInUser &&
+                this.state.profilePage===false
+                &&
                 <button type="submit" className="btn btn-primary btn-block"
                         onClick={this.createUser}>
-                  {this.state.profilePage ?  "Update": "Sign Up"}
-
+                  Sign Up
+                </button>
+              }
+              {
+                this.state.detailsOfLoggedInUser &&
+                this.state.profilePage===true&&
+                <button type="submit" className="btn btn-primary btn-block"
+                        onClick={this.createUser}>
+                  Update
                 </button>
               }
               <div>

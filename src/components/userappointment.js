@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {Redirect} from "react-router-dom"
+import {Link, Redirect} from "react-router-dom"
 import {getAppointments} from "../service/UserService";
+import {getAppointmentsByOwner} from "../service/RestaurantService"
 
 export default class AppointmentTable extends Component {
   constructor(props) {
@@ -14,8 +15,14 @@ export default class AppointmentTable extends Component {
 
   componentDidMount = async () => {
     if (this.state.user !== undefined) {
-      let appointments = await getAppointments(this.state.user.id);
-      this.setState({appointments: appointments})
+
+      if(this.state.user.role==="customer"){
+        let appointments = await getAppointments(this.state.user.id);
+        this.setState({appointments: appointments})
+      }else if(this.state.user.role==="owner"){
+        let appointments = await getAppointmentsByOwner(this.state.user.id);
+        this.setState({appointments: appointments})
+      }
     }
   };
 
@@ -23,7 +30,7 @@ export default class AppointmentTable extends Component {
     if (this.token !== null && this.state.user !== undefined) {
       if (this.state.user) {
         return (
-            <div class="table-responsive">
+            <div className="table-responsive">
               <table className="table table-borderless table-light">
                 <thead className="m-2">
                 <tr>
@@ -44,7 +51,9 @@ export default class AppointmentTable extends Component {
                           <tr>
                             <th className="text-left" scope="row">*</th>
                             <td className="text-left">
-                              {appointment.restaurant.name}
+                              <Link to={`/restaurant/${parseInt(appointment.restaurant.id)}`}>
+                                {appointment.restaurant.name}
+                              </Link>
                             </td>
                             <td className="text-left">
                               {appointment.date}
@@ -56,7 +65,9 @@ export default class AppointmentTable extends Component {
                               this.state.user.role==="owner"
                               &&
                               <td className="text-left">
-                                {appointment.customer.username}
+                                <Link to={`/profile/${appointment.customer.username}`}>
+                                  {appointment.customer.username}
+                                </Link>
                               </td>
                             }
                           </tr>

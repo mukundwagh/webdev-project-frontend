@@ -181,7 +181,14 @@ export default class RestaurantPage extends Component {
                 <div className="mt-3 auth-wrapper">
                   <div className="auth-inner">
                     <h2 className="text-center mb-2 border-bottom">Reviews</h2>
-                    <PostReviewComponent postReview={this.postReview}/>
+                    {
+                      localStorage.getItem("token") !== null &&
+                      JSON.parse(localStorage.getItem("token")).role
+                      === "owner" && this.state.restaurantDB == null &&
+                      <PostReviewComponent postReview={this.postReview}/>
+
+                    }
+
                     {
                       localStorage.getItem("token") !== null &&
                       this.state.reviewDB &&

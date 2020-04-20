@@ -74,3 +74,45 @@ export const updateRestaurantService = async (restaurant) => {
   });
   return await response.json()
 };
+
+export const getRestaurantByOwnerService = async (ownerId) => {
+  let url = API_URL + "/restaurants/owner/" + ownerId;
+  let response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  return await response.json()
+};
+
+
+export const getAppointmentsByOwner = async (ownerId) => {
+
+  let restaurants = await getRestaurantByOwnerService(ownerId);
+
+  let appointments = [];
+  for (const rest of restaurants) {
+    let appoint = await getAppointmentsByRestaurant(rest.id)
+    appointments = appointments.concat(appoint);
+  }
+
+  return appointments;
+}
+
+
+export const getAppointmentsByRestaurant= async (restId) => {
+  const url = API_URL+"/appointment/restaurant/"+ restId;
+  const response = await fetch(url, {
+    method: 'GET'
+  });
+
+  let res = await response.json();
+
+  if(response.status===200 && res.length!==0){
+    return res
+  }
+
+  return res
+
+};

@@ -156,7 +156,8 @@ export default class SignUp extends Component {
   render() {
     return (
         <div className="auth-wrapper">
-          <div className="auth-inner">
+          <div className={this.state.detailsOfLoggedInUser?"auth-inner-profile":
+              "auth-inner"}>
             <form>
               <h3>{this.state.profilePage ? "Profile": "Sign Up"}</h3>
 

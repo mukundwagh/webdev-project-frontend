@@ -1,5 +1,6 @@
 import React from 'react';
 import StarRating from 'react-star-ratings';
+import {Link} from "react-router-dom";
 
 export default class PostReviewComponent extends React.Component {
 
@@ -24,30 +25,25 @@ export default class PostReviewComponent extends React.Component {
   };
 
   render() {
-      return (<div className="container-fluid">
-        <div>
-
+    return (
+          <div className="review-component review-component-border">
+            <StarRating rating={this.state.rating}
+                        starRatedColor="red"
+                        starDefaultColor="gray"
+                        numberOfStars={5}
+                        name='rating'
+                        changeRating={this.changeRating}
+                        starDimension="20px"
+                        starSpacing="3px"></StarRating>
+            <textarea
+                value={this.state.comment}
+                onChange={this.changeComment}
+                className="review-component"
+            ></textarea>
+            <button onClick={() => {
+              this.props.postReview(this.state)
+            }} className="btn btn-dark">Post Comment</button>
         </div>
-        <StarRating rating={this.state.rating}
-                    starRatedColor="red"
-                    starDefaultColor="gray"
-                    numberOfStars={5}
-                    name='rating'
-                    changeRating={this.changeRating}
-                    starDimension="20px"
-                    starSpacing="3px"></StarRating>
-        <div>
-          <textarea
-              onChange={this.changeComment}
-              value={this.state.comment}
-              className="review-comment"
-          ></textarea>
-          <button onClick={() => {
-            this.props.postReview(this.state)}}
-                  className="btn btn-dark float-right post">Post Comment
-          </button>
-        </div>
-
-      </div>)
-    }
+    )
+  }
 }

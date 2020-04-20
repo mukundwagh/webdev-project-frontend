@@ -1,5 +1,7 @@
 import React from 'react';
 import StarRating from 'react-star-ratings';
+import {Link} from "react-router-dom";
+import 'font-awesome/css/font-awesome.min.css';
 
 export default class ReviewComponent extends React.Component {
 
@@ -8,6 +10,7 @@ export default class ReviewComponent extends React.Component {
     this.state = {
       comment: this.props.review.comment,
       rating: this.props.review.rating,
+      username: this.props.review.customer.username,
     };
   }
 
@@ -24,21 +27,28 @@ export default class ReviewComponent extends React.Component {
   }
 
   render() {
-      return (
-          <div>
-            <div>
-              <StarRating rating={this.state.rating}
-                          starRatedColor="red"
-                          starDefaultColor="gray"
-                          numberOfStars={5}
-                          name='rating'
-                          starDimension="20px"
-                          starSpacing="3px"></StarRating>
-              <textarea
-                  value={this.state.comment}
-                  className="review-comment"
-              ></textarea>
+    return (
+          <div className="review-component review-component-border">
+            <Link to={`/profile/${this.state.username}`}>
+              <i className="fa fa-2x fa-user mr-2"></i>
+              {this.state.username}
+            </Link>
+            <div className="d-block">
+
+            <StarRating rating={this.state.rating}
+                        starRatedColor="red"
+                        starDefaultColor="gray"
+                        numberOfStars={5}
+                        name='rating'
+                        starDimension="20px"
+                        starSpacing="3px"
+            ></StarRating>
             </div>
-          </div>)
+
+            <textarea
+                value={this.state.comment}
+                className="review-component"
+            ></textarea>
+        </div>)
   }
 }

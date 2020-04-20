@@ -165,7 +165,7 @@ body, html, .App, #root, .auth-wrapper {
   flex-direction: row;
 }
 
-.review-comment {
+.review-component {
   resize: none;
   padding: 2%;
   width: 100%;
@@ -174,9 +174,14 @@ body, html, .App, #root, .auth-wrapper {
   border: none;
   background-color: whitesmoke;
   text-align: justify-all;
-  border-left-style: solid;
-  border-right-color: green;
 }
+
+
+.review-component-border {
+  border-left-style: solid;
+  border-left-color: green;
+}
+
 
 textarea:focus {
   outline: none;

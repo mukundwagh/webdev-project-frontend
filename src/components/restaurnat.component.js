@@ -4,10 +4,10 @@ import DateTimePicker from 'react-datetime-picker'
 import ReviewComponent from "./reviews.component";
 import PostReviewComponent from "./postreviews.component";
 import {
+  bookAppointmentService,
   claimRestaurantService,
   fetchZomatoRestaurantbyId,
-  getRestaurantService,
-  bookAppointmentService, searchRestaurant
+  getRestaurantService
 } from "../service/RestaurantService"
 
 import {
@@ -55,7 +55,7 @@ export default class RestaurantPage extends Component {
 
   makeReservation = async (e) => {
     e.preventDefault();
-    if(localStorage.getItem("token") !== null) {
+    if (localStorage.getItem("token") !== null) {
       let user = JSON.parse(localStorage.getItem("token"));
       let datetime = {};
       datetime["date"] = this.state.appointmentTime.toISOString();
@@ -88,7 +88,7 @@ export default class RestaurantPage extends Component {
 
   postReview = async (review) => {
 
-    if(localStorage.getItem("token") !== null){
+    if (localStorage.getItem("token") !== null) {
       let user = JSON.parse(localStorage.getItem("token"));
       review["customerId"] = user.id;
       review["restaurantId"] = parseInt(this.state.restaurant.id);
@@ -181,32 +181,17 @@ export default class RestaurantPage extends Component {
                 <div className="mt-3 auth-wrapper">
                   <div className="auth-inner">
                     <h2 className="text-center mb-2 border-bottom">Reviews</h2>
-                    <div className="form-group row">
-                      <PostReviewComponent postReview={this.postReview}/>
-                    </div>
+                    <PostReviewComponent postReview={this.postReview}/>
                     {
-                    localStorage.getItem("token") !== null &&
-                    this.state.reviewDB &&
-                    this.state.reviewDB.map(
-                    review =>
-                    (review.rating !== null && review.comment
-                    !== undefined) ?
-                    <ReviewComponent review={review}
-                    key={review.id}/> :
-                    null
-                    )
-                    }
-                  </div>
-                  <div>
-                    {
-                      this.state.restaurant.all_reviews
-                      &&
-                      this.state.restaurant.all_reviews.reviews.map(review =>
-                          (review.rating !== null && review.comment
-                              !== undefined) ?
-                              <ReviewComponent review={review}
-                                               key={review.id}/> :
-                              null
+                      localStorage.getItem("token") !== null &&
+                      this.state.reviewDB &&
+                      this.state.reviewDB.map(
+                          review =>
+                              (review.rating !== null && review.comment
+                                  !== undefined) ?
+                                  <ReviewComponent review={review}
+                                                   key={review.id}/> :
+                                  null
                       )
                     }
                   </div>

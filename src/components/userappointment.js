@@ -25,7 +25,7 @@ export default class AppointmentTable extends Component {
         return (
             <div class="table-responsive">
               <table className="table table-borderless table-light">
-                <thead>
+                <thead className="m-2">
                 <tr>
                   <th className="text-left" scope="col">#</th>
                   <th className="text-left" scope="col">Restaurant Name</th>

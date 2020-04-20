@@ -41,9 +41,12 @@ export default class RestaurantPage extends Component {
     });
 
     let restaurantDB = await getRestaurantService(restaurant.id);
-    this.setState({
-      restaurantDB: restaurantDB
-    })
+    if(restaurantDB.name!==null){
+      this.setState({
+        restaurantDB: restaurantDB
+      })
+    }
+
 
     let reviewDB = await fetchReviewByRestaurantId(restaurant.id);
     this.setState({
@@ -58,8 +61,8 @@ export default class RestaurantPage extends Component {
     if (localStorage.getItem("token") !== null) {
       let user = JSON.parse(localStorage.getItem("token"));
       let datetime = {};
-      datetime["date"] = this.state.appointmentTime.toISOString();
-      datetime["time"] = this.state.appointmentTime.toISOString();
+      datetime["date"] = this.state.appointmentTime.toString();
+      datetime["time"] = this.state.appointmentTime.toString();
       datetime["customerId"] = user.id;
       datetime["restaurantId"] = parseInt(this.state.restaurant.id);
       await bookAppointmentService(datetime);

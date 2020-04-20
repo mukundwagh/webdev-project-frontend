@@ -166,6 +166,7 @@ export default class SignUp extends Component {
                 <input type="text" className="form-control"
                        placeholder="First name"
                        value={this.state.user.firstName}
+                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
                        onChange={this.updateFirstName}/>
               </div>
 
@@ -174,6 +175,7 @@ export default class SignUp extends Component {
                 <input type="text" className="form-control"
                        placeholder="Last name"
                        value={this.state.user.lastName}
+                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
                        onChange={this.updateLastName}/>
               </div>
 
@@ -182,6 +184,7 @@ export default class SignUp extends Component {
                 <input type="text" className="form-control"
                        placeholder="Enter username"
                        value={this.state.user.username}
+                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
                        onChange={this.updateUsername}/>
               </div>
 
@@ -190,6 +193,7 @@ export default class SignUp extends Component {
                 <input type="email" className="form-control"
                        placeholder="Enter email"
                        value={this.state.user.email}
+                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
                        onChange={this.updateEmail}/>
               </div>
 
@@ -198,13 +202,14 @@ export default class SignUp extends Component {
                 <input type="password" className="form-control"
                        placeholder="Enter password"
                        value={this.state.user.password}
+                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
                        onChange={this.updatePassword}/>
               </div>
 
               <div className="form-group">
                 <label>Type</label>
                 <select value={this.state.user.role} className="form-control"
-                        onChange={this.updateRole}>
+                        onChange={this.updateRole} disabled={!this.state.detailsOfLoggedInUser&&this.state.profilePage}>
                   <option value="customer">Customer</option>
                   <option value="owner">Restaurant Owner</option>
                 </select>

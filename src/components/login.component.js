@@ -67,8 +67,8 @@ export default class Login extends Component {
               <h3>Sign In</h3>
 
               <div className="form-group">
-                <label>Email address</label>
-                <input type="email" className="form-control"
+                <label>Username</label>
+                <input type="text" className="form-control"
                        placeholder="Enter email"
                        onChange={this.updateEmail}
                        value={this.state.email}/>

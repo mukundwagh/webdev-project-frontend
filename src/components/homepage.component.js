@@ -31,7 +31,7 @@ export default class HomePage extends Component {
   searchTextChange = async (e)=> {
     e.persist();
     this.setState({searchRestaurantText: e.target.value});
-    if (e.keyCode == 13 || e.which == 13) {
+    if (e.keyCode === 13 || e.which === 13) {
       await this.searchByValue();
     }
   }

@@ -148,7 +148,7 @@ export default class SignUp extends Component {
     e.preventDefault();
     let out = await createUserService(this.state.user);
     if (out && out.username === null) {
-      this.setState({save_status: "Invalid details"})
+      this.setState({save_status: "Invalid details "})
     } else {
       this.setState({save_status: "Successfully created"})
     }

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Redirect} from "react-router-dom";
-import {findUserByEmailIdService} from "../service/UserService"
+import {findUserByUsernameService} from "../service/UserService"
 
 export default class Login extends Component {
 
@@ -15,17 +15,17 @@ export default class Login extends Component {
     }
 
     this.state = {
-      email: "",
+      username: "",
       password: "",
       error:null,
       loggedIn: isloggedIn
     }
   }
 
-  updateEmail = (e) => {
+  updateUsername = (e) => {
     this.setState({
       error:null,
-      email: e.target.value
+      username: e.target.value
     });
   };
 
@@ -39,12 +39,12 @@ export default class Login extends Component {
 
   loginUser = async (e) => {
     e.preventDefault();
-    let get_user = await findUserByEmailIdService(this.state.email);
+    let get_user = await findUserByUsernameService(this.state.username);
     if (get_user && get_user.error){
       this.setState({
         error: get_user.error
       })
-    }else if(this.state.email === get_user.email
+    }else if(this.state.username === get_user.username
         && this.state.password === get_user.password) {
       localStorage.setItem("token", JSON.stringify(get_user));
       this.setState({
@@ -69,9 +69,9 @@ export default class Login extends Component {
               <div className="form-group">
                 <label>Username</label>
                 <input type="text" className="form-control"
-                       placeholder="Enter email"
-                       onChange={this.updateEmail}
-                       value={this.state.email}/>
+                       placeholder="Enter Username"
+                       onChange={this.updateUsername}
+                       value={this.state.username}/>
               </div>
 
               <div className="form-group">

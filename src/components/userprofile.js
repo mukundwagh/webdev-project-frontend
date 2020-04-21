@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import AppointmentTable from "./userappointment";
 import {searchRestaurant} from "../service/RestaurantService";
-import {findUserByEmailIdService} from "../service/UserService";
+import {findUserByUsernameService} from "../service/UserService";
 import SignUp from "./signup.component";
 
 export default class Profile extends Component {
@@ -31,20 +31,20 @@ export default class Profile extends Component {
 
   componentWillMount = async () => {
     const { match: { params } } = this.props;
-    let userId;
+    let username;
     let detailsOfLoggedInUser=false;
 
-    if(params.id){
-      userId=params.id;
+    if(params.username){
+      username=params.username;
     }else{
-      userId=this.state.email;
+      username=this.state.username;
     }
 
-    if(userId===this.state.email){
+    if(username===this.state.username){
       detailsOfLoggedInUser=true;
     }
     this.setState({
-      userId:userId,
+      userId:username,
       detailsOfLoggedInUser:detailsOfLoggedInUser
     });
 
@@ -56,13 +56,13 @@ export default class Profile extends Component {
     let userId;
     let detailsOfLoggedInUser=false;
 
-    if(params.id){
-      userId=params.id;
+    if(params.username){
+      userId=params.username;
     }else{
-      userId=this.state.email;
+      userId=this.state.username;
     }
 
-    if(userId===this.state.email){
+    if(userId===this.state.username){
       detailsOfLoggedInUser=true;
     }
     this.setState({
@@ -76,7 +76,7 @@ export default class Profile extends Component {
     if (localStorage.getItem("token") !== null) {
       return (
           <SignUp detailsOfLoggedInUser={this.state.detailsOfLoggedInUser}
-          userId={this.state.userId}
+          username={this.state.userId}
           profilePage={true}/>
       );
     }

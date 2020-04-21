@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import AppointmentTable from "./userappointment";
 import {searchRestaurant} from "../service/RestaurantService";
-import {findUserByEmailIdService} from "../service/UserService";
+import {findUserByUsernameService} from "../service/UserService";
 
 export default class Profile extends Component {
 
@@ -41,7 +41,7 @@ export default class Profile extends Component {
       detailsOfLoggedInUser=true;
     }
 
-    let userDB = await findUserByEmailIdService(userId);
+    let userDB = await findUserByUsernameService(userId);
     this.setState({
       detailsOfLoggedInUser:detailsOfLoggedInUser,
       firstName: userDB.firstName,

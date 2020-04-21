@@ -1,9 +1,11 @@
 import React, {Component} from "react";
 import {
   createUserService,
-  findUserByEmailIdService
+  findUserByUsernameService,
+  updateUserService
 } from "../service/UserService"
 import AppointmentTable from "./userappointment";
+import OwnedRestaurantTable from "./restaurantownedtable.component"
 
 export default class SignUp extends Component {
 
@@ -33,13 +35,13 @@ export default class SignUp extends Component {
       const user = JSON.parse(token);
       let detailsOfLoggedInUser = false;
       let userDB;
-      if(this.props.userId===undefined||this.props.userId===null){
-        userDB = await findUserByEmailIdService(user.email);
-      }else if(user.email===this.props.userId){
-        userDB = await findUserByEmailIdService(this.props.userId);
+      if (this.props.username === undefined || this.props.username === null) {
+        userDB = await findUserByUsernameService(user.username);
+      } else if (user.username === this.props.username) {
+        userDB = await findUserByUsernameService(this.props.username);
         detailsOfLoggedInUser = true
-      }else{
-        userDB = await findUserByEmailIdService(this.props.userId);
+      } else {
+        userDB = await findUserByUsernameService(this.props.username);
       }
       this.setState({
         detailsOfLoggedInUser: detailsOfLoggedInUser,
@@ -59,7 +61,7 @@ export default class SignUp extends Component {
   }
 
   componentWillReceiveProps = async (nextProps) => {
-    let userDB = await findUserByEmailIdService(nextProps.userId);
+    let userDB = await findUserByUsernameService(nextProps.username);
     this.setState({
       detailsOfLoggedInUser: nextProps.detailsOfLoggedInUser,
       profilePage: nextProps.profilePage,
@@ -145,7 +147,7 @@ export default class SignUp extends Component {
   createUser = async (e) => {
     e.preventDefault();
     let out = await createUserService(this.state.user);
-    if (out && out.email === null) {
+    if (out && out.username === null) {
       this.setState({save_status: "Invalid details"})
     } else {
       this.setState({save_status: "Successfully created"})
@@ -153,100 +155,143 @@ export default class SignUp extends Component {
 
   };
 
+  updateUser = async (e) => {
+    e.preventDefault();
+    let out = await updateUserService(this.state.user);
+    if (out && out.username === null) {
+      this.setState({save_status: "Invalid details"})
+    } else {
+      this.setState({save_status: "Updated details"})
+    }
+
+  };
+
+  updateProfile() {
+  }
+
   render() {
     return (
-        <div className="auth-wrapper">
-          <div className={this.state.detailsOfLoggedInUser?"auth-inner-profile":
-              "auth-inner"}>
-            <form>
-              <h3>{this.state.profilePage ? "Profile": "Sign Up"}</h3>
+        <div className="container-fluid">
+          <div className="rowC">
+            <div className="auth-wrapper">
+              <div className={this.state.detailsOfLoggedInUser
+                  ? "auth-inner-profile" :
+                  "auth-inner"}>
+                <form>
+                  <h2 className="text-center mb-2 border-bottom">
+                    {this.state.profilePage ? "Profile" : "Sign Up"}</h2>
 
-              <div className="form-group">
-                <label>First name</label>
-                <input type="text" className="form-control"
-                       placeholder="First name"
-                       value={this.state.user.firstName}
-                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
-                       onChange={this.updateFirstName}/>
-              </div>
+                  <div className="form-group">
+                    <label>First name</label>
+                    <input type="text" className="form-control"
+                           placeholder="First name"
+                           value={this.state.user.firstName}
+                           readOnly={!this.state.detailsOfLoggedInUser
+                           && this.state.profilePage}
+                           onChange={this.updateFirstName}/>
+                  </div>
 
-              <div className="form-group">
-                <label>Last name</label>
-                <input type="text" className="form-control"
-                       placeholder="Last name"
-                       value={this.state.user.lastName}
-                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
-                       onChange={this.updateLastName}/>
-              </div>
+                  <div className="form-group">
+                    <label>Last name</label>
+                    <input type="text" className="form-control"
+                           placeholder="Last name"
+                           value={this.state.user.lastName}
+                           readOnly={!this.state.detailsOfLoggedInUser
+                           && this.state.profilePage}
+                           onChange={this.updateLastName}/>
+                  </div>
 
-              <div className="form-group">
-                <label>Username</label>
-                <input type="text" className="form-control"
-                       placeholder="Enter username"
-                       value={this.state.user.username}
-                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
-                       onChange={this.updateUsername}/>
-              </div>
+                  <div className="form-group">
+                    <label>Username</label>
+                    <input type="text" className="form-control"
+                           placeholder="Enter username"
+                           value={this.state.user.username}
+                           readOnly={this.state.profilePage}
+                           onChange={this.updateUsername}/>
+                  </div>
 
-              <div className="form-group">
-                <label>Email address</label>
-                <input type="email" className="form-control"
-                       placeholder="Enter email"
-                       value={this.state.user.email}
-                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
-                       onChange={this.updateEmail}/>
-              </div>
+                  <div className="form-group">
+                    <label>Email address</label>
+                    <input type="email" className="form-control"
+                           placeholder="Enter email"
+                           value={this.state.user.email}
+                           readOnly={this.state.profilePage}
+                           onChange={this.updateEmail}/>
+                  </div>
 
-              <div className="form-group">
-                <label>Password</label>
-                <input type="password" className="form-control"
-                       placeholder="Enter password"
-                       value={this.state.user.password}
-                       readOnly={!this.state.detailsOfLoggedInUser&&this.state.profilePage}
-                       onChange={this.updatePassword}/>
-              </div>
+                  <div className="form-group"
+                       hidden={!this.state.detailsOfLoggedInUser
+                       && this.state.profilePage}>
+                    <label>Password</label>
+                    <input type="password" className="form-control"
+                           placeholder="Enter password"
+                           value={this.state.user.password}
+                           readOnly={!this.state.detailsOfLoggedInUser
+                           && this.state.profilePage}
+                           onChange={this.updatePassword}/>
+                  </div>
 
-              <div className="form-group">
-                <label>Type</label>
-                <select value={this.state.user.role} className="form-control"
-                        onChange={this.updateRole} disabled={!this.state.detailsOfLoggedInUser&&this.state.profilePage}>
-                  <option value="customer">Customer</option>
-                  <option value="owner">Restaurant Owner</option>
-                </select>
-              </div>
+                  <div className="form-group">
+                    <label>Type</label>
+                    <select value={this.state.user.role}
+                            className="form-control"
+                            onChange={this.updateRole}
+                            disabled={this.state.profilePage}>
+                      <option value="customer">Customer</option>
+                      <option value="owner">Restaurant Owner</option>
+                    </select>
+                  </div>
 
-              {
-                this.state.profilePage===false
-                &&
-                <button type="submit" className="btn btn-primary btn-block"
-                        onClick={this.createUser}>
-                  Sign Up
-                </button>
-              }
-              {
-                this.state.detailsOfLoggedInUser &&
-                this.state.profilePage===true&&
-                <button type="submit" className="btn btn-primary btn-block"
-                        onClick={this.createUser}>
-                  Update
-                </button>
-              }
-              <div>
-                {
-                  this.state.save_status &&
-                  <h6 className="text-danger">
-                    {this.state.save_status}
-                  </h6>
-                }
+                  {
+                    this.state.profilePage === false
+                    &&
+                    <button type="submit" className="btn btn-primary btn-block"
+                            onClick={this.createUser}>
+                      Sign Up
+                    </button>
+                  }
+                  {
+                    this.state.detailsOfLoggedInUser &&
+                    this.state.profilePage === true &&
+                    <button type="submit" className="btn btn-primary btn-block"
+                            onClick={this.updateUser}>
+                      Update
+                    </button>
+                  }
+                  <div>
+                    {
+                      this.state.save_status &&
+                      <h6 className="text-danger">
+                        {this.state.save_status}
+                      </h6>
+                    }
+                  </div>
+                  {
+                    this.state.detailsOfLoggedInUser &&
+                    <div className="form-group">
+                      <AppointmentTable
+                          detailsOfLoggedInUser={this.state.detailsOfLoggedInUser}/>
+                    </div>
+                  }
+                </form>
               </div>
-              {
-                this.state.detailsOfLoggedInUser &&
-                <div className="form-group">
-                  <AppointmentTable
-                      detailsOfLoggedInUser={this.state.detailsOfLoggedInUser}/>
+            </div>
+            {
+              this.state.profilePage &&
+              this.state.user.role === "owner" &&
+              <div className="auth-wrapper">
+                <div className="auth-inner-profile">
+                  <h2 className="text-center mb-2 border-bottom">Owned
+                    Restaurants</h2>
+                  <OwnedRestaurantTable
+                      editable={this.state.detailsOfLoggedInUser}
+                      ownerUsername={this.state.user.username}
+
+                  />
                 </div>
-              }
-            </form>
+              </div>
+            }
+
           </div>
         </div>
     );

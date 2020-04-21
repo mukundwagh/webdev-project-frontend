@@ -7,7 +7,9 @@ import {
   bookAppointmentService,
   claimRestaurantService,
   fetchZomatoRestaurantbyId,
-  getRestaurantService
+  getRestaurantService,
+  unclaimRestaurantService,
+  updateRestaurantService
 } from "../service/RestaurantService"
 
 import {
@@ -20,20 +22,24 @@ export default class RestaurantPage extends Component {
   constructor(props) {
     super(props);
     const token = localStorage.getItem("token");
-    let isloggedIn = true;
-    if (token == null) {
-      isloggedIn = false;
+    let isloggedIn = false;
+    let loggedInUserId = null;
+    if (token !== null) {
+      isloggedIn = true;
+      loggedInUserId = JSON.parse(token).id;
     }
 
     this.state = {
       loggedIn: isloggedIn,
+      loggedInOwner: false,
+      loggedInUserId: loggedInUserId,
       restaurant: null,
       appointmentTime: new Date()
     }
 
   }
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     const {match: {params}} = this.props;
     let restaurant = await fetchZomatoRestaurantbyId(params.id);
     this.setState({
@@ -41,20 +47,44 @@ export default class RestaurantPage extends Component {
     });
 
     let restaurantDB = await getRestaurantService(restaurant.id);
-    if(restaurantDB.name!==null){
-      this.setState({
-        restaurantDB: restaurantDB
-      })
+    let loggedInOwner;
+    if (this.state.loggedInUserId && restaurantDB.name !== null) {
+      loggedInOwner = false;
+      if (restaurantDB.owner === this.state.loggedInUserId) {
+        loggedInOwner = true
+      }
+    } else {
+      restaurantDB = null;
     }
-
 
     let reviewDB = await fetchReviewByRestaurantId(restaurant.id);
     this.setState({
-      reviewDB: reviewDB
+      reviewDB: reviewDB,
+      restaurant: restaurant,
+      restaurantDB: restaurantDB,
+      loggedInOwner: loggedInOwner
     })
   };
 
   selectReservationTime = appointmentTime => this.setState({appointmentTime});
+
+  updateAddress = (e) => {
+    this.setState({
+      restaurantDB: {
+        ...this.state.restaurantDB,
+        address: e.target.value
+      }
+    });
+  };
+
+  updateCity = (e) => {
+    this.setState({
+      restaurantDB: {
+        ...this.state.restaurantDB,
+        city: e.target.value
+      }
+    });
+  };
 
   makeReservation = async (e) => {
     e.preventDefault();
@@ -66,6 +96,33 @@ export default class RestaurantPage extends Component {
       datetime["customerId"] = user.id;
       datetime["restaurantId"] = parseInt(this.state.restaurant.id);
       await bookAppointmentService(datetime);
+    }
+  };
+
+  unclaimRestaurant = async (e) => {
+    e.preventDefault();
+    let user = localStorage.getItem("token");
+    if (user != null && this.state.restaurantDB != null) {
+      await unclaimRestaurantService(this.state.restaurantDB.id);
+      let restaurant = await fetchZomatoRestaurantbyId(
+          this.state.restaurantDB.id);
+      this.setState({
+        restaurantDB: null,
+      });
+    }
+  };
+
+  updateRestaurant = async (e) => {
+    e.preventDefault();
+    let user = localStorage.getItem("token");
+    if (user != null && this.state.restaurantDB != null) {
+      await updateRestaurantService(this.state.restaurantDB);
+    }
+    let restaurantDB = await getRestaurantService(this.state.restaurant.id);
+    if (restaurantDB.name !== null) {
+      this.setState({
+        restaurantDB: restaurantDB
+      })
     }
   };
 
@@ -84,9 +141,24 @@ export default class RestaurantPage extends Component {
         "website": this.state.restaurant.url,
         "phone": this.state.restaurant.phone_numbers.toString()
       };
-
       await claimRestaurantService(rest);
     }
+
+    let restaurantDB = await getRestaurantService(this.state.restaurant.id);
+    let loggedInOwner;
+    if (this.state.loggedInUserId && restaurantDB.name !== null) {
+      loggedInOwner = false;
+      if (restaurantDB.owner === this.state.loggedInUserId) {
+        loggedInOwner = true
+      }
+    }
+    if (restaurantDB.name !== null) {
+      this.setState({
+        restaurantDB: restaurantDB,
+        loggedInOwner:loggedInOwner
+      })
+    }
+
   };
 
   postReview = async (review) => {
@@ -118,23 +190,73 @@ export default class RestaurantPage extends Component {
               </div>
               <div className="rowC">
                 <div className="mt-3 auth-wrapper">
-                  <div className="auth-inner-profile">
+                  <div className="auth-inner">
                     <h2 className="text-center mb-2 border-bottom">Details</h2>
                     <form>
                       <div className="form-group row">
                         <label>Locality : </label>
                         <address className="pl-2">
-                          {this.state.restaurant.location.locality_verbose}
+                          {
+                            localStorage.getItem("token") !== null &&
+                            JSON.parse(localStorage.getItem("token")).role
+                            === "owner" && this.state.restaurantDB !== null &&
+                            this.state.restaurantDB !== undefined &&
+                            this.state.loggedInOwner === true &&
+                            <textarea type="text" className="form-control"
+                                      placeholder="Enter city"
+                                      value={this.state.restaurantDB.city}
+                                      onChange={this.updateCity}
+                            />
+                          }
+                          {
+                            this.state.restaurantDB !== null &&
+                            this.state.restaurantDB !== undefined &&
+                            this.state.loggedInOwner === false &&
+                            <textarea type="text" className="form-control"
+                                      placeholder="Enter city"
+                                      disabled={true}
+                                      onChange={this.updateCity}
+                                      value={this.state.restaurantDB.city}/>
+                          }
+                          {
+                            this.state.restaurantDB === null
+                            &&
+                            this.state.restaurant.location.locality_verbose
+                          }
                         </address>
                       </div>
 
                       <div className="form-group row">
                         <label>Address : </label>
                         <address className="pl-2">
-                          {this.state.restaurant.location.address}
+                          {
+                            localStorage.getItem("token") !== null &&
+                            JSON.parse(localStorage.getItem("token")).role
+                            === "owner" && this.state.restaurantDB !== null &&
+                            this.state.restaurantDB !== undefined &&
+                            this.state.loggedInOwner === true &&
+                            <textarea type="text" className="form-control"
+                                      placeholder="Enter cuisines"
+                                      onChange={this.updateAddress}
+                                      value={this.state.restaurantDB.address}/>
+                          }
+                          {
+                            this.state.restaurantDB !== null &&
+                            this.state.restaurantDB !== undefined &&
+                            this.state.loggedInOwner === false &&
+                            <textarea type="text" className="form-control"
+                                      placeholder="Enter cuisines"
+                                      disabled={true}
+                                      onChange={this.updateAddress}
+                                      value={this.state.restaurantDB.address}/>
+                          }
+                          {
+                            this.state.restaurantDB === null
+                            &&
+                            this.state.restaurant.location.address
+                          }
                         </address>
                       </div>
-
 
                       <div className="form-group row">
                         <label>Cuisines : </label>
@@ -178,6 +300,35 @@ export default class RestaurantPage extends Component {
                           </div>
                         </div>
                       }
+                      {
+                        localStorage.getItem("token") !== null &&
+                        JSON.parse(localStorage.getItem("token")).role
+                        === "owner" && this.state.restaurantDB !== null &&
+                        this.state.loggedInOwner &&
+                        <div>
+                          <div className="form-group row">
+                            <button type="submit"
+                                    onClick={this.updateRestaurant}
+                                    className="btn btn-danger">Update
+                            </button>
+                          </div>
+                        </div>
+                      }
+                      {
+                        localStorage.getItem("token") !== null &&
+                        JSON.parse(localStorage.getItem("token")).role
+                        === "owner" && this.state.restaurantDB !== null &&
+                        this.state.loggedInOwner &&
+                        <div>
+                          <div className="form-group row">
+                            <button type="submit"
+                                    onClick={this.unclaimRestaurant}
+                                    className="btn btn-danger">Unclaim
+                              Restaurant
+                            </button>
+                          </div>
+                        </div>
+                      }
                     </form>
                   </div>
                 </div>
@@ -187,7 +338,8 @@ export default class RestaurantPage extends Component {
                     {
                       localStorage.getItem("token") !== null &&
                       JSON.parse(localStorage.getItem("token")).role
-                      === "owner" && this.state.restaurantDB == null &&
+                      === "customer" && this.state.restaurantDB !== null &&
+                      this.state.restaurantDB !== undefined &&
                       <PostReviewComponent postReview={this.postReview}/>
 
                     }

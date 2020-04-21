@@ -1,10 +1,10 @@
 import {API_URL} from "../common/constants";
 
-export const createUserService = async (restaurant) => {
+export const createUserService = async (user) => {
   let url = API_URL + "/user";
   let response = await fetch(url, {
     method: 'POST',
-    body: JSON.stringify(restaurant),
+    body: JSON.stringify(user),
     headers: {
       'content-type': 'application/json'
     }
@@ -13,8 +13,25 @@ export const createUserService = async (restaurant) => {
 };
 
 
-export const findUserByEmailIdService = async (userEmailId) => {
-  const url = API_URL+"/user/email/"+ userEmailId;
+
+export const updateUserService = async (user) => {
+
+  let userDB = await findUserByUsernameService(user.username);
+  let url = API_URL + "/user/" + userDB.id;
+  let response = await fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(user),
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  return await response.json()
+};
+
+
+
+export const findUserByUsernameService = async (userEmailId) => {
+  const url = API_URL+"/user/username/"+ userEmailId;
   const response = await fetch(url, {
     method: 'GET'
   });

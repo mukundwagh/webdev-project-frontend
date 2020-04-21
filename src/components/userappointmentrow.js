@@ -68,8 +68,12 @@ export default class AppointmentTableRow extends Component {
           {
             this.state.user.role === "customer" &&
             <td className="text-left">
-              <i className="fa fa-2x fa-save mr-2" onClick={this.updateAppointmentTime}></i>
-              <i className="fa fa-2x fa-trash" onClick={this.deleteAppointmentTime}></i>
+              <i className="fa fa-2x fa-save mr-2 "
+                 style={{cursor:'pointer'}}
+                 onClick={this.updateAppointmentTime}></i>
+              <i className="fa fa-2x fa-trash"
+                 style={{cursor:'pointer'}}
+                 onClick={this.deleteAppointmentTime}></i>
             </td>
           }
         </tr>

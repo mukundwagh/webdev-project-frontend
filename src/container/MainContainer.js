@@ -50,7 +50,7 @@ export default class MainContainer extends Component {
                     />
                     <Route exact path="/sign-up" component={SignUp}/>
                     <Route path="/restaurant/:id" component={RestaurantPage}/>
-                    <Route path="/profile/:id?" component={Profile}/>
+                    <Route path="/profile/:username?" component={Profile}/>
                   </Switch>
                 </div>
               </div>

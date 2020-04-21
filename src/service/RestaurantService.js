@@ -1,4 +1,5 @@
 import {ZOMATO_API_URL, USER_KEY, API_URL} from "../common/constants";
+import {findUserByUsernameService} from "../service/UserService";
 
 export const searchRestaurant = async (searchString) => {
   let url = ZOMATO_API_URL + "/search?q=" + searchString;
@@ -50,6 +51,18 @@ export const claimRestaurantService = async (restaurant) => {
   return await response.json()
 };
 
+
+export const unclaimRestaurantService = async (restaurantId) => {
+  let url = API_URL + "/restaurant/" + restaurantId;
+  let response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  return await response.status
+};
+
 export const bookAppointmentService = async (appointment) => {
   let url = API_URL + "/appointment";
   let response = await fetch(url, {
@@ -64,10 +77,24 @@ export const bookAppointmentService = async (appointment) => {
 
 
 export const updateRestaurantService = async (restaurant) => {
-  let url = API_URL + "/restaurant?" + restaurant.id;
+  let url = API_URL + "/restaurant/" + restaurant.id;
   let response = await fetch(url, {
     method: 'PUT',
     body: JSON.stringify(restaurant),
+    headers: {
+      'content-type': 'application/json'
+    }
+  });
+  return await response.json()
+};
+
+
+export const getRestaurantByOwnerNameService = async (ownerName) => {
+
+  let owner = await findUserByUsernameService(ownerName);
+  let url = API_URL + "/restaurants/owner/" + owner.id;
+  let response = await fetch(url, {
+    method: 'GET',
     headers: {
       'content-type': 'application/json'
     }

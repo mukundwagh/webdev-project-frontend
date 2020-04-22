@@ -39,7 +39,7 @@ export default class MainContainer extends Component {
                 <div>
                   <Switch>
                     <Route exact path='/' component={HomePage}/>
-                    <Route path='/search/:query' component={HomePage}/>
+                    <Route path='/search/:query?' component={HomePage}/>
                     <Route
                         path='/sign-in'
                         render={(props) => <Login {...props} loggedInEvent={this.loggedInEvent} />}

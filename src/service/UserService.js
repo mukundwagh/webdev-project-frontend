@@ -2,14 +2,18 @@ import {API_URL} from "../common/constants";
 
 export const createUserService = async (user) => {
   let url = API_URL + "/user";
-  let response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(user),
-    headers: {
-      'content-type': 'application/json'
-    }
-  });
-  return await response.json()
+
+  let userDB = await findUserByUsernameService(user.username);
+  if(userDB.id===null|| userDB.id===undefined) {
+    let response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(user),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+    return await response.json()
+  }
 };
 
 
@@ -17,15 +21,17 @@ export const createUserService = async (user) => {
 export const updateUserService = async (user) => {
 
   let userDB = await findUserByUsernameService(user.username);
-  let url = API_URL + "/user/" + userDB.id;
-  let response = await fetch(url, {
-    method: 'PUT',
-    body: JSON.stringify(user),
-    headers: {
-      'content-type': 'application/json'
-    }
-  });
-  return await response.json()
+  if(userDB.id!==null|| userDB.id!==undefined) {
+    let url = API_URL + "/user/" + userDB.id;
+    let response = await fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(user),
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+    return await response.json()
+  }
 };
 
 

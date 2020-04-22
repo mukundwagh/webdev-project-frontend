@@ -190,7 +190,7 @@ export default class RestaurantPage extends Component {
               </div>
               <div className="rowC">
                 <div className="mt-3 auth-wrapper">
-                  <div className="auth-inner">
+                  <div className="auth-inner-profile">
                     <h2 className="text-center mb-2 border-bottom">Details</h2>
                     <form>
                       <div className="form-group row">
@@ -309,7 +309,7 @@ export default class RestaurantPage extends Component {
                           <div className="form-group row">
                             <button type="submit"
                                     onClick={this.updateRestaurant}
-                                    className="btn btn-danger">Update
+                                    className="btn btn-success">Update
                             </button>
                           </div>
                         </div>
